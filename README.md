@@ -5,7 +5,7 @@
 <table>
 <tr>
 <td><img src="https://github.com/real-ali/country_picker_plus/blob/main/assets/images/1.png" alt="image 1" width="240"/></td>
-<td><img src="https://github.com/real-ali/country_picker_plus/blob/main/assets/images/2.png.png"  alt="image 2" width="240"/></td>
+<td><img src="https://github.com/real-ali/country_picker_plus/blob/main/assets/images/2.png"  alt="image 2" width="240"/></td>
 <td><img src="https://github.com/real-ali/country_picker_plus/blob/main/assets/images/3.png"  alt="image 2" width="240"/></td>
 
 ### Sample Example to describe this Package
