@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'model/bottom_sheet_style.dart';
 
+/// DropdownWithSearch Class
 class DropdownWithSearch<T> extends StatelessWidget {
   final BottomSheetStyle? bottomSheetStyle;
   final T selected;
@@ -16,6 +17,7 @@ class DropdownWithSearch<T> extends StatelessWidget {
 
   final Function onChanged;
 
+  /// DropdownWithSearch Class constractor
   const DropdownWithSearch({
     Key? key,
     required this.items,
@@ -108,12 +110,14 @@ class DropdownWithSearch<T> extends StatelessWidget {
   }
 }
 
+/// SearchBox class
 class SearchBox extends StatefulWidget {
   final List items;
   final TextStyle? listItemStyle;
   final InputDecoration? searchFieldDecoration;
   final String hintText;
 
+  /// SearchBox class constractor
   const SearchBox({
     Key? key,
     required this.items,
@@ -194,6 +198,7 @@ class _SearchBoxState<T> extends State<SearchBox> {
     );
   }
 
+  /// SearchBox build list
   Widget? _buildList(BuildContext context, int index) {
     return InkWell(
       onTap: () {

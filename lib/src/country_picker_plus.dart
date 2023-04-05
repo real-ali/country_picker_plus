@@ -11,6 +11,7 @@ import 'enum/country_flag.dart';
 import 'model/bottom_sheet_style.dart';
 import 'model/select_status_model.dart';
 
+///Country Picker Plus class
 class CountryPickerPlus extends StatefulWidget {
   ///Country Picker Plus Constructor
   const CountryPickerPlus({
@@ -45,51 +46,103 @@ class CountryPickerPlus extends StatefulWidget {
     this.searchFiedlDecoration,
   }) : super(key: key);
 
+  /// variable
   final ValueChanged<String>? onCountryChanged;
+
+  /// variable
   final ValueChanged<String?>? onStateChanged;
+
+  /// variable
   final ValueChanged<String?>? onCityChanged;
 
+  /// variable
   final String? currentCountry;
+
+  /// variable
   final String? currentState;
+
+  /// variable
   final String? currentCity;
 
+  /// variable
   final bool disableCountry;
 
   ///Parameters to change style of location Picker
+  /// variable
   final EdgeInsetsGeometry? fieldPadding, fieldMargin;
+
+  /// variable
   final String? countrySearchHintText;
+
+  /// variable
   final String? citySearchHintText;
+
+  /// variable
   final String? stateSearchHintText;
+
+  /// variable
   final InputDecoration? searchFiedlDecoration;
+
+  /// variable
   final TextStyle? selectedItemStyle, listItemStyle;
+
+  /// variable
   final BoxDecoration? dropdownDecoration, disabledDropdownDecoration;
+
+  /// variable
   final bool showStates, showCities;
+
+  /// variable
   final CountryFlag flagState;
 
+  /// variable
   final double? searchBarRadius;
+
+  /// variable
   final double? dropdownDialogRadius;
 
-  final CscCountry? defaultCountry;
+  /// variable
+  final CppCountry? defaultCountry;
+
+  /// variable
   final BottomSheetStyle? bottomSheetStyle;
 
+  /// variable
   final String countryDropdownLabel;
+
+  /// variable
   final String stateDropdownLabel;
+
+  /// variable
   final String cityDropdownLabel;
 
-  final List<CscCountry>? countryFilter;
+  /// variable
+  final List<CppCountry>? countryFilter;
 
   @override
   CountryPickerPlusState createState() => CountryPickerPlusState();
 }
 
 class CountryPickerPlusState extends State<CountryPickerPlus> {
+  /// variable
   final List<String?> _cities = [];
-  final List<String?> _country = [];
-  final List<String?> _states = [];
-  List<CscCountry> _countryFilter = [];
 
+  /// variable
+  final List<String?> _country = [];
+
+  /// variable
+  final List<String?> _states = [];
+
+  /// variable
+  List<CppCountry> _countryFilter = [];
+
+  /// variable
   String _selectedCity = 'City';
+
+  /// variable
   String? _selectedCountry;
+
+  /// variable
   String _selectedState = 'State';
 
   @override
@@ -120,6 +173,7 @@ class CountryPickerPlusState extends State<CountryPickerPlus> {
     }
   }
 
+  /// _setDefaultCountry function
   void _setDefaultCountry() {
     if (widget.defaultCountry != null) {
       _onSelectedCountry(_country[Countries[widget.defaultCountry]!]!);
@@ -265,6 +319,7 @@ class CountryPickerPlusState extends State<CountryPickerPlus> {
     });
   }
 
+  /// _onSelectedState Function
   void _onSelectedState(String value) {
     if (!mounted) return;
     setState(() {
@@ -282,6 +337,7 @@ class CountryPickerPlusState extends State<CountryPickerPlus> {
     });
   }
 
+  /// _onSelectedCity Function
   void _onSelectedCity(String value) {
     if (!mounted) return;
     setState(() {

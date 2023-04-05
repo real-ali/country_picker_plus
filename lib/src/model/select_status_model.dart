@@ -1,3 +1,4 @@
+///Country Class
 class Country {
   int? id;
   String? name;
@@ -9,6 +10,7 @@ class Country {
   int? countrycode;
   List<Region>? state;
 
+  ///Country Class Constractor
   Country(
       {this.id,
       this.name,
@@ -20,6 +22,7 @@ class Country {
       this.frenchname,
       this.countrycode});
 
+  ///Country Class adaptar [map to json]
   Country.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
@@ -37,6 +40,7 @@ class Country {
     }
   }
 
+  ///Country Class adaptar [json to map]
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
@@ -54,14 +58,17 @@ class Country {
   }
 }
 
+///Region Class
 class Region {
   int? id;
   String? name;
   int? countryId;
   List<City>? city;
 
+  ///Region Class constractor
   Region({this.id, this.name, this.countryId, this.city});
 
+  ///Region Class adapter [map to json]
   Region.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
@@ -74,6 +81,7 @@ class Region {
     }
   }
 
+  ///Region Class adapter [json to map]
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
@@ -86,19 +94,23 @@ class Region {
   }
 }
 
+///city class
 class City {
   int? id;
   String? name;
   int? stateId;
 
+  ///city class constractor
   City({this.id, this.name, this.stateId});
 
+  ///city class adapter [map to json]
   City.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     stateId = json['state_id'];
   }
 
+  ///city class adapter [json to map]
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
