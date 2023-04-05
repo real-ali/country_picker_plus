@@ -40,7 +40,7 @@ A flutter package to display list of Countries, States and Cities depends on Sel
         onCountryChanged: _onCountryChangeHandler,
         onStateChanged: _onStateChangeHandler,
         onCityChanged: _onCityChangeHandler,
-      )
+      );
   ```
 
 
