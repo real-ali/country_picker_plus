@@ -11,37 +11,37 @@ A flutter package to display list of Countries, States and Cities depends on Sel
 
 ### Flutter Initialization
 
-- ### Installation
+- ##### Installation
   ```
   flutter pub add country_picker_plus
   ```
-- ### Declaration
-##### top of Your dart file
-```
-import 'package:country_picker_plus/country_picker_plus.dart';
-```
-- ### initialize code 
-```dart
-CountryPickerPlus(
-      showStates: true,
-      showCities: false,
-      flagState: CountryFlag.SHOW_IN_DROP_DOWN_ONLY,
-      dropdownDecoration: dropdownDecoration,
-      disabledDropdownDecoration: disabledDropdownDecoration,
-      countryDropdownLabel: "Country",
-      stateDropdownLabel: "State",
-      cityDropdownLabel: "City",
-      selectedItemStyle: selectedItemStyle,
-      bottomSheetStyle: bottomSheetStyle,
-      searchFiedlDecoration: searchFiedlDecoration,
-      listItemStyle: listItemStyle,
-      dropdownDialogRadius: 10.0,
-      searchBarRadius: 10.0,
-      onCountryChanged: _onCountryChangeHandler,
-      onStateChanged: _onStateChangeHandler,
-      onCityChanged: _onCityChangeHandler,
-    )
-```
+- ##### Declaration
+  ###### At the top of Your dart file
+  ```
+  import 'package:country_picker_plus/country_picker_plus.dart';
+  ```
+- ##### initialize code 
+  ```dart
+  CountryPickerPlus(
+        showStates: true,
+        showCities: false,
+        flagState: CountryFlag.SHOW_IN_DROP_DOWN_ONLY,
+        dropdownDecoration: dropdownDecoration,
+        disabledDropdownDecoration: disabledDropdownDecoration,
+        countryDropdownLabel: "Country",
+        stateDropdownLabel: "State",
+        cityDropdownLabel: "City",
+        selectedItemStyle: selectedItemStyle,
+        bottomSheetStyle: bottomSheetStyle,
+        searchFiedlDecoration: searchFiedlDecoration,
+        listItemStyle: listItemStyle,
+        dropdownDialogRadius: 10.0,
+        searchBarRadius: 10.0,
+        onCountryChanged: _onCountryChangeHandler,
+        onStateChanged: _onStateChangeHandler,
+        onCityChanged: _onCityChangeHandler,
+      )
+  ```
 
 
 ### Maintainer Inforamtion
