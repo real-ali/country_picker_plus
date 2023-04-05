@@ -9,7 +9,7 @@ A flutter package to display list of Countries, States and Cities depends on Sel
  
 
 
-- Initialization
+[Initialization]
 
 ```dart
 CountryPickerPlus(
@@ -35,5 +35,5 @@ CountryPickerPlus(
 
 
 ### Maintainer Inforamtion
-#### Ali Hosseini : - s.alisinahussaini313@gmail.com
-#### [More Info About Maintainer](https://real-ali.github.io)
+###### Ali Hosseini : - s.alisinahussaini313@gmail.com
+##### [More Info About Maintainer](https://real-ali.github.io)
