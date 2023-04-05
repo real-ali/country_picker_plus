@@ -1,6 +1,6 @@
 # Country Picker Plus!
 
-[![pub package](https://github.com/real-ali/country_picker_plus/blob/main/assets/images/1.png)](https://pub.dev/packages/country_picker_plus)
+[![pub package](https://pub.dev/packages/country_picker_plus)]
 
 A flutter package to display list of Countries, States and Cities depends on Selected, also you can search country, state, and city all around the world.
 
