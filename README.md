@@ -1,4 +1,4 @@
-# Country Picker Plus!
+# Country Picker Plus
 
 A flutter package to display list of Countries, States and Cities depends on Selected, also you can search country, state, and city all around the world.
 
@@ -9,8 +9,18 @@ A flutter package to display list of Countries, States and Cities depends on Sel
  
 
 
-### Initialization
+### Flutter Initialization
 
+- ### Installation
+  ```
+  flutter pub add country_picker_plus
+  ```
+- ### Declaration
+##### top of Your dart file
+```
+import 'package:country_picker_plus/country_picker_plus.dart';
+```
+- ### initialize code 
 ```dart
 CountryPickerPlus(
       showStates: true,
