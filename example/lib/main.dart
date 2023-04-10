@@ -2,139 +2,143 @@ import 'package:country_picker_plus/country_picker_plus.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CounteyPickerPlusView(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CounteyPickerPlusView extends StatelessWidget {
+  CounteyPickerPlusView({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Country Picker plus',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const CountryPickerPlusPage(
-        title: 'Country Picker plus',
-      ),
-    );
-  }
-}
+  final _formKey = GlobalKey<FormState>();
 
-class CountryPickerPlusPage extends StatefulWidget {
-  final String title;
-
-  const CountryPickerPlusPage({super.key, required this.title});
-
-  @override
-  State<StatefulWidget> createState() => _CountryPickerPlusPageState();
-}
-
-class _CountryPickerPlusPageState extends State<CountryPickerPlusPage> {
-  String? _countryValue = "";
-  String? _stateValue = "";
-  String? _cityValue = "";
-  String? _address = "";
-
-  void _onCountryChangeHandler(String value) {
-    setState(() {
-      ///store value in country variable
-      _countryValue = value;
-    });
-  }
-
-  void _onStateChangeHandler(String? value) {
-    setState(() {
-      _stateValue = value;
-    });
-  }
-
-  void _onCityChangeHandler(String? value) {
-    setState(() {
-      _cityValue = value;
-    });
-  }
-
-  void _onPrintHandler() {
-    setState(() {
-      _address = "$_cityValue, $_stateValue, $_countryValue";
-    });
+  void _onSubmit() {
+    if (_formKey.currentState?.validate() == true) {
+      _formKey.currentState?.save();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    const listItemStyle = TextStyle(
-      color: Colors.black,
-      fontSize: 14,
-    );
-    const searchFiedlDecoration = InputDecoration(
-      prefixIconColor: Colors.orange,
-    );
-    const outlineInputBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
+    var fieldDecoration = CPPFDecoration(
+      labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+      hintStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+      margin: const EdgeInsets.all(10),
+      suffixColor: Colors.deepOrangeAccent,
+      innerColor: Colors.deepOrangeAccent.withOpacity(0.06),
+      filled: true,
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.deepOrangeAccent),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: Colors.deepOrangeAccent.withOpacity(0.2)),
       ),
     );
-    var bottomSheetStyle = BottomSheetStyle(
-      shape: outlineInputBorder,
+    final bottomSheetDecoration = CPPBSHDecoration(
+      closeColor: Colors.deepOrangeAccent,
+      itemDecoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      itemsPadding: const EdgeInsets.all(8),
+      itemsSpace: const EdgeInsets.symmetric(vertical: 4),
+      itemTextStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+      ),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Colors.grey.withOpacity(0.1)),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
     );
-    const selectedItemStyle = TextStyle(
-      color: Colors.black,
-      fontSize: 14,
-    );
-    final disabledDropdownDecoration = BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: Colors.grey.shade300,
-        border: Border.all(color: Colors.grey.shade300, width: 1));
-    final dropdownDecoration = BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
+    final searchDecoration = CPPSFDecoration(
+      height: 45,
+      padding: const EdgeInsets.symmetric(
+        vertical: 2,
+        horizontal: 10,
+      ),
+      filled: true,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      hintStyle: const TextStyle(
         color: Colors.white,
-        border: Border.all(color: Colors.grey.shade300, width: 1));
-    final countryPickerPlus = CountryPickerPlus(
-      showStates: true,
-      showCities: false,
-      flagState: CountryFlag.SHOW_IN_DROP_DOWN_ONLY,
-      dropdownDecoration: dropdownDecoration,
-      disabledDropdownDecoration: disabledDropdownDecoration,
-      countryDropdownLabel: "Country",
-      stateDropdownLabel: "State",
-      cityDropdownLabel: "City",
-      selectedItemStyle: selectedItemStyle,
-      bottomSheetStyle: bottomSheetStyle,
-      searchFiedlDecoration: searchFiedlDecoration,
-      listItemStyle: listItemStyle,
-      dropdownDialogRadius: 10.0,
-      searchBarRadius: 10.0,
-      onCountryChanged: _onCountryChangeHandler,
-      onStateChanged: _onStateChangeHandler,
-      onCityChanged: _onCityChangeHandler,
-    );
-    final printButton = TextButton(
-      onPressed: _onPrintHandler,
-      child: const Text("Print Data"),
-    );
-    final address = Text(_address ?? '');
-
-    final body = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      height: 600,
-      child: Column(
-        children: [
-          countryPickerPlus,
-          printButton,
-          address,
-        ],
+        fontWeight: FontWeight.w400,
       ),
-    );
-    final appBar = AppBar(
-      title: Text(widget.title),
+      searchIconColor: Colors.white,
+      textStyle: const TextStyle(color: Colors.white, fontSize: 12),
+      innerColor: Colors.deepOrangeAccent,
+      border: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(10),
+      ),
     );
     return Scaffold(
-      appBar: appBar,
-      body: body,
+      persistentFooterButtons: [
+        Container(
+          margin: const EdgeInsets.all(20),
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrangeAccent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30))),
+              onPressed: _onSubmit,
+              child: const Text("Submit Data")),
+        )
+      ],
+      appBar: AppBar(
+        backgroundColor: Colors.deepOrangeAccent,
+        title: const Text("Country Picker Plus"),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            CountryPickerPlus(
+              // hideFields: const [CPPInputType.city],
+              isRequired: true,
+              countryLabel: "Country",
+              countrySearchHintText: "Search Country",
+              countryHintText: "Tap to Select Country",
+              stateLabel: "State",
+              stateHintText: "Tap to Select State",
+              cityLabel: "City",
+              cityHintText: "Tap to Select City",
+              bottomSheetDecoration: bottomSheetDecoration,
+              decoration: fieldDecoration,
+              searchDecoration: searchDecoration,
+              onCountrySaved: (value) {
+                print(value);
+              },
+              onCountrySelected: (value) {
+                print(value);
+              },
+              onStateSelected: (value) {
+                print(value);
+              },
+              onCitySelected: (value) {
+                print(value);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

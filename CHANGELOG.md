@@ -8,3 +8,5 @@
     documantation added to project
 ##### [1.0.0+5]
     documantation added to project
+##### [2.0.0]
+    Basic changes were applied to the overall structure of the project

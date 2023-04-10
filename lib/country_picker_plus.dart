@@ -1,496 +1,547 @@
-///Country Picker Plus Main File
-library country_picker_plus;
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'country_picker_plus.dart';
-import 'src/dropdown_with_search.dart';
-import 'src/model/select_status_model.dart';
+import 'src/controller/cubit/countries_cubit.dart';
+import 'src/country_picker_plus.init.dart';
+import 'src/views/city_field_picker.dart';
+import 'src/views/country_field_picker.dart';
+import 'src/views/state_field_picker.dart';
 
-///Countries List as Enum
-export 'src/enum/countries.dart';
+export 'src/models/bottom_sheet_decoration.dart';
+export 'src/models/enums/close_icon.dart';
+export 'src/models/enums/input_type.dart';
+export 'src/models/enums/label_position.dart';
+export 'src/models/enums/pop_up_type.dart';
+export 'src/models/enums/search_icon.dart';
+export 'src/models/field_decoreation.dart';
+export 'src/models/search_field_decoration.dart';
 
-///Countries show type  as Enum
-export 'src/enum/country_flag.dart';
+///A flutter package to display list of Countries, States and Cities depends on Selected,
+///also you can search country, state, and city all around the world.
+///
 
-///country picker plus bottom sheet style
-export 'src/model/bottom_sheet_style.dart';
+///### How to use
+///The package has two methods that you can use according to your needs
+///
+///1. By using the main package, all three fields, which are the country, State, and City, are created by default, and you can design them as you wish.
+///
+///Sample code for this section:
+///
+/// ```dart
+/// CountryPickerPlus(
+///    isRequired: true,
+///    countryLabel: "Country",
+///    countrySearchHintText: "Search Country",
+///    countryHintText: "Tap to Select Country",
+///    stateLabel: "State",
+///    stateHintText: "Tap to Select State",
+///    cityLabel: "City",
+///    cityHintText: "Tap to Select City",
+///    bottomSheetDecoration: bottomSheetDecoration,
+///    decoration: fieldDecoration,
+///    searchDecoration: searchDecoration,
+///    onCountrySaved: (value) {},
+///    onCountrySelected: (value) {},
+///    onStateSelected: (value) {},
+///    onCitySelected: (value) {},
+/// ),
+/// ```
+/// **Note:** You can hide each field as you wish
+///
+/// For Instance:
+///
+///
+/// In the main package class. Use the following property
+///
+///
+///    ```dart
+///    hideFields: const [CPPInputType.city,...],
+///    ```
+///
+/// 2. Or use each of the fields individually [`country`,`state`,`city`]
+///
+/// Sample code for this section:
+/// ```dart
+/// CountryPickerPlus.country(...);
+/// ```
+/// ```dart
+/// CountryPickerPlus.state(country:'COUNTRY_NAME',...);
+/// ```
+/// ```dart
+/// CountryPickerPlus.city(country:'COUNTRY_NAME',state:'STATE_NAME',...);
+/// ```
+///
+/// And and and other features that you can play with using code... :)
+///
+///
+///
+/// ## Additional information
+///
+/// A Package Developed by Ali Hosseini
+///
+/// Please, report the bugs through the Github repository:
+///
+/// https://github.com/real-ali/country_picker_plus/issues
+///
+///
+class CountryPickerPlus extends StatelessWidget {
+  /// set Label for Country Field
+  /// ```
+  /// countryLabel:"Country";
+  /// ```
+  final String? countryLabel;
 
-///Country Picker Plus class
-class CountryPickerPlus extends StatefulWidget {
-  ///Country Picker Plus Constructor
-  const CountryPickerPlus({
-    Key? key,
-    this.onCountryChanged,
-    this.onStateChanged,
-    this.onCityChanged,
-    this.selectedItemStyle,
-    this.dropdownDecoration,
-    this.disabledDropdownDecoration,
-    this.searchBarRadius,
-    this.dropdownDialogRadius,
-    this.flagState = CountryFlag.ENABLE,
-    this.showStates = true,
-    this.showCities = true,
-    this.defaultCountry,
-    this.currentCountry,
-    this.currentState,
-    this.currentCity,
-    this.disableCountry = false,
-    this.countryDropdownLabel = "Country",
-    this.stateDropdownLabel = "State",
-    this.cityDropdownLabel = "City",
-    this.countryFilter,
-    this.fieldPadding,
-    this.listItemStyle,
-    this.fieldMargin,
-    this.bottomSheetStyle,
-    this.countrySearchHintText,
-    this.citySearchHintText,
-    this.stateSearchHintText,
-    this.searchFiedlDecoration,
-  }) : super(key: key);
+  /// set Label for state Field
+  /// ```
+  /// stateLabel:"State":
+  /// ```
+  final String? stateLabel;
 
-  /// variable
-  final ValueChanged<String>? onCountryChanged;
+  /// set Label for City Field
+  /// ```
+  /// cityLabel:"city";
+  /// ```
+  final String? cityLabel;
 
-  /// variable
-  final ValueChanged<String?>? onStateChanged;
+  /// set Hint Text for Country Field
+  /// ```
+  /// countryHintText:"Tap to Select Country";
+  /// ```
+  final String? countryHintText;
 
-  /// variable
-  final ValueChanged<String?>? onCityChanged;
+  /// set Hint Tex for State Field
+  /// ```
+  /// stateHintText:"Tap to Select State";
+  /// ```
+  final String? stateHintText;
 
-  /// variable
-  final String? currentCountry;
+  /// set Hint Tex for City Field
+  /// ```
+  /// cityHintText:"Tap to Select City";
+  /// ```
+  final String? cityHintText;
 
-  /// variable
-  final String? currentState;
+  /// Inialize defualt Value to Country Field
+  /// ```
+  /// countryInitialValue: "Afghanistan";
+  /// ```
+  final String? countryInitialValue;
 
-  /// variable
-  final String? currentCity;
+  /// Inialize defualt Value to State Field
+  /// ```
+  /// stateInitialValue: "...";
+  /// ```
+  final String? stateInitialValue;
 
-  /// variable
-  final bool disableCountry;
+  /// Inialize defualt Value to City Field
+  /// ```
+  /// cityInitialValue: "...";
+  /// ```
+  final String? cityInitialValue;
 
-  ///Parameters to change style of location Picker
-  /// variable
-  final EdgeInsetsGeometry? fieldPadding, fieldMargin;
-
-  /// variable
+  /// set Hint Tex for Country Search Field
+  /// ```
+  /// countrySearchHintText: "Search Countries";
+  /// ```
   final String? countrySearchHintText;
 
-  /// variable
-  final String? citySearchHintText;
-
-  /// variable
+  /// set Hint Tex for State Search Field
+  ///  ```
+  /// stateSearchHintText: "Search States";
+  /// ```
   final String? stateSearchHintText;
 
-  /// variable
-  final InputDecoration? searchFiedlDecoration;
+  /// set Hint Tex for City search Field
+  ///  ```
+  /// citySearchHintText: "Search Cities";
+  /// ```
+  final String? citySearchHintText;
 
-  /// variable
-  final TextStyle? selectedItemStyle, listItemStyle;
+  /// hide some Feild **[`country`,`state`,`city`]**
+  ///
+  /// For Instance:
+  /// ```
+  /// hideFields: [CPPInputType.city]
+  /// ```
+  final List<CPPInputType>? hideFields;
 
-  /// variable
-  final BoxDecoration? dropdownDecoration, disabledDropdownDecoration;
+  ///Specify whether the field is **isRequired** or not.
+  ///```
+  ///isRequired: false; or isRequired: true;
+  ///```
+  final bool isRequired;
 
-  /// variable
-  final bool showStates, showCities;
+  ///### Country Picker Plus Fields Decoration
+  /// #### Attributes
+  ///
+  /// ```
+  ///  final double? height;
+  ///  final bool showFlag;
+  ///  final double? width;
+  ///  final String? requiredErrorMessage;
+  ///
+  ///  final IconData? suffixIcon;
+  ///  final TextStyle? labelStyle;
+  ///  final TextStyle? hintStyle;
+  ///
+  ///  /// By default value take from Theme Data `bodyMedium`
+  ///  final TextStyle? textStyle;
+  ///
+  ///  final EdgeInsetsGeometry? padding;
+  ///  final EdgeInsetsGeometry? margin;
+  ///  final InputBorder? border;
+  ///  final PopUpType popUpType;
+  ///
+  ///  final bool? isDisable;
+  ///  final Color? innerColor;
+  ///  final Color? curserColor;
+  ///  final LabelPosition labelPosition;
+  ///  final Color? suffixColor;
+  ///  final InputBorder? focusedBorder;
+  ///  final InputBorder? errorBorder;
+  ///  final bool? filled;
+  ///
+  /// ```
+  final CPPFDecoration decoration;
 
-  /// variable
-  final CountryFlag flagState;
+  /// ### Country Picker Plus bottom Sheet Decoration
+  /// #### Attributes
+  /// ```
+  /// final TextStyle? itemTextStyle;
+  /// final EdgeInsetsGeometry? itemsPadding;
+  /// final CloseIcon closeIcon;
+  /// final BoxDecoration? itemDecoration;
+  /// final ShapeBorder? shape;
+  /// final double? height;
+  /// final EdgeInsetsGeometry? itemsSpace;
+  /// final Color? closeColor;
+  /// final Color? islandColor;
+  /// final double? islandWidth;
+  /// ```
+  final CPPBSHDecoration bottomSheetDecoration;
 
-  /// variable
-  final double? searchBarRadius;
+  /// ### Country Picker Plus Search Decoration
+  /// #### Attributes
+  /// ```
+  /// final SearchIcon searchIconType;
+  /// final IconData? searchIcon;
+  ///
+  /// final Color? searchIconColor;
+  /// final double? height;
+  /// final TextStyle? hintStyle;
+  ///
+  /// /// By default value take from Theme Data `bodyMedium`
+  /// final TextStyle? textStyle;
+  /// final Color? curserColor;
+  /// final EdgeInsetsGeometry? padding;
+  /// final EdgeInsetsGeometry? margin;
+  /// final InputBorder? border;
+  /// final Color? innerColor;
+  /// final InputBorder? focusedBorder;
+  /// final bool? filled;
 
-  /// variable
-  final double? dropdownDialogRadius;
+  /// ```
+  final CPPSFDecoration searchDecoration;
 
-  /// variable
-  final CppCountry? defaultCountry;
+  /// Control what to do when value comes on Item Select in Countries List
+  /// ```
+  /// onCountrySelected: (value) => print(value)
+  /// ```
+  final void Function(String value)? onCountrySelected;
 
-  /// variable
-  final BottomSheetStyle? bottomSheetStyle;
+  /// Control what to do when value comes on Item Select in States List
+  /// ```
+  /// onStateSelected: (value) => print(value)
+  /// ```
+  final void Function(String value)? onStateSelected;
 
-  /// variable
-  final String countryDropdownLabel;
+  /// Control what to do when value comes on Item Select in Cities List
+  /// ```
+  /// onCitySelected: (value) => print(value)
+  /// ```
+  final void Function(String value)? onCitySelected;
 
-  /// variable
-  final String stateDropdownLabel;
+  /// Control what to do when value comes when Form Submitted  in Country Field
+  /// ```
+  /// onCountrySaved: (value) => print(value)
+  /// ```
+  final void Function(String? value)? onCountrySaved;
 
-  /// variable
-  final String cityDropdownLabel;
+  /// Control what to do when value comes when Form Submitted  in State Field
+  /// ```
+  /// onStateSaved: (value) => print(value)
+  /// ```
+  final void Function(String? value)? onStateSaved;
 
-  /// variable
-  final List<CppCountry>? countryFilter;
+  /// Control what to do when value comes when Form Submitted  in City Field
+  /// ```
+  /// onCitySaved: (value) => print(value)
+  /// ```
+  final void Function(String? value)? onCitySaved;
 
-  @override
-  CountryPickerPlusState createState() => CountryPickerPlusState();
-}
+  ///A flutter package to display list of Countries, States and Cities depends on Selected,
+  ///also you can search country, state, and city all around the world.
+  ///
 
-class CountryPickerPlusState extends State<CountryPickerPlus> {
-  /// variable
-  final List<String?> _cities = [];
+  ///### How to use
+  ///The package has two methods that you can use according to your needs
+  ///
+  ///1. By using the main package, all three fields, which are the country, State, and City, are created by default, and you can design them as you wish.
+  ///
+  ///Sample code for this section:
+  ///
+  /// ```dart
+  /// CountryPickerPlus(
+  ///    isRequired: true,
+  ///    countryLabel: "Country",
+  ///    countrySearchHintText: "Search Country",
+  ///    countryHintText: "Tap to Select Country",
+  ///    stateLabel: "State",
+  ///    stateHintText: "Tap to Select State",
+  ///    cityLabel: "City",
+  ///    cityHintText: "Tap to Select City",
+  ///    bottomSheetDecoration: bottomSheetDecoration,
+  ///    decoration: fieldDecoration,
+  ///    searchDecoration: searchDecoration,
+  ///    onCountrySaved: (value) {},
+  ///    onCountrySelected: (value) {},
+  ///    onStateSelected: (value) {},
+  ///    onCitySelected: (value) {},
+  /// ),
+  /// ```
+  /// **Note:** You can hide each field as you wish
+  ///
+  /// For Instance:
+  ///
+  ///
+  /// In the main package class. Use the following property
+  ///
+  ///
+  ///    ```dart
+  ///    hideFields: const [CPPInputType.city,...],
+  ///    ```
+  ///
+  /// 2. Or use each of the fields individually [`country`,`state`,`city`]
+  ///
+  /// Sample code for this section:
+  /// ```dart
+  /// CountryPickerPlus.country(...);
+  /// ```
+  /// ```dart
+  /// CountryPickerPlus.state(country:'COUNTRY_NAME',...);
+  /// ```
+  /// ```dart
+  /// CountryPickerPlus.city(country:'COUNTRY_NAME',state:'STATE_NAME',...);
+  /// ```
+  ///
+  /// And and and other features that you can play with using code... :)
+  ///
+  ///
+  ///
+  /// ## Additional information
+  ///
+  /// A Package Developed by Ali Hosseini
+  ///
+  /// Please, report the bugs through the Github repository:
+  ///
+  /// https://github.com/real-ali/country_picker_plus/issues
+  ///
+  ///
+  const CountryPickerPlus({
+    super.key,
+    this.hideFields,
+    this.onCountrySelected,
+    this.onStateSelected,
+    this.onCitySelected,
+    this.onCountrySaved,
+    this.onStateSaved,
+    this.onCitySaved,
+    this.isRequired = false,
+    this.decoration = const CPPFDecoration(),
+    this.bottomSheetDecoration = const CPPBSHDecoration(),
+    this.searchDecoration = const CPPSFDecoration(),
+    this.countryLabel,
+    this.stateLabel,
+    this.cityLabel,
+    this.countryHintText,
+    this.stateHintText,
+    this.cityHintText,
+    this.countrySearchHintText,
+    this.stateSearchHintText,
+    this.citySearchHintText,
+    this.countryInitialValue,
+    this.stateInitialValue,
+    this.cityInitialValue,
+  });
 
-  /// variable
-  final List<String?> _country = [];
-
-  /// variable
-  final List<String?> _states = [];
-
-  /// variable
-  List<CppCountry> _countryFilter = [];
-
-  /// variable
-  String _selectedCity = 'City';
-
-  /// variable
-  String? _selectedCountry;
-
-  /// variable
-  String _selectedState = 'State';
-
-  @override
-  void initState() {
-    super.initState();
-    setDefaults();
-    if (widget.countryFilter != null) {
-      _countryFilter = widget.countryFilter!;
-    }
-    getCountries();
-    _selectedCity = widget.cityDropdownLabel;
-    _selectedState = widget.stateDropdownLabel;
+  ///### Country Field
+  ///#### Attributes
+  ///```
+  ///  String? searchHintText,
+  ///  String? hintText,
+  ///  String? label,
+  ///  String? initialValue,
+  ///  CPPSFDecoration searchDecoration = const CPPSFDecoration(),
+  ///  CPPBSHDecoration bottomSheetDecoration = const CPPBSHDecoration(),
+  ///  CPPFDecoration decoration = const CPPFDecoration(),
+  ///  bool isRequired = false,
+  ///  void Function(String value)? onSelected,
+  ///  void Function(String? value)? onSaved,
+  ///```
+  static Widget country({
+    String? searchHintText,
+    String? hintText,
+    String? label,
+    String? initialValue,
+    CPPSFDecoration searchDecoration = const CPPSFDecoration(),
+    CPPBSHDecoration bottomSheetDecoration = const CPPBSHDecoration(),
+    CPPFDecoration decoration = const CPPFDecoration(),
+    bool isRequired = false,
+    void Function(String value)? onSelected,
+    void Function(String? value)? onSaved,
+  }) {
+    return BlocProvider(
+      create: (context) => CountriesBloc(),
+      child: CountryFieldPicker(
+        initialValue: initialValue,
+        searchHintText: searchHintText,
+        hintText: hintText,
+        label: label,
+        searchDecoration: searchDecoration,
+        bottomSheetDecoration: bottomSheetDecoration,
+        decoration: decoration,
+        isRequired: isRequired,
+        onSelected: onSelected,
+        onSaved: onSaved,
+      ),
+    );
   }
 
-  Future<void> setDefaults() async {
-    if (widget.currentCountry != null) {
-      setState(() => _selectedCountry = widget.currentCountry);
-      await getStates();
-    }
-
-    if (widget.currentState != null) {
-      setState(() => _selectedState = widget.currentState!);
-      await getCities();
-    }
-
-    if (widget.currentCity != null) {
-      setState(() => _selectedCity = widget.currentCity!);
-    }
+  ///### State Field
+  ///#### Attributes
+  ///```
+  /// required String country,
+  /// String? searchHintText,
+  /// String? hintText,
+  /// String? initialValue,
+  /// String? label,
+  /// CPPSFDecoration searchDecoration = const CPPSFDecoration(),
+  /// CPPBSHDecoration bottomSheetDecoration = const CPPBSHDecoration(),
+  /// CPPFDecoration decoration = const CPPFDecoration(),
+  /// bool isRequired = false,
+  /// void Function(String value)? onSelected,
+  /// void Function(String? value)? onSaved,
+  ///```
+  static Widget state({
+    required String country,
+    String? searchHintText,
+    String? hintText,
+    String? initialValue,
+    String? label,
+    CPPSFDecoration searchDecoration = const CPPSFDecoration(),
+    CPPBSHDecoration bottomSheetDecoration = const CPPBSHDecoration(),
+    CPPFDecoration decoration = const CPPFDecoration(),
+    bool isRequired = false,
+    void Function(String value)? onSelected,
+    void Function(String? value)? onSaved,
+  }) {
+    return BlocProvider(
+      create: (context) => CountriesBloc(),
+      child: StateFieldPicker(
+        initialValue: initialValue,
+        country: country,
+        searchHintText: searchHintText,
+        hintText: hintText,
+        label: label,
+        searchDecoration: searchDecoration,
+        bottomSheetDecoration: bottomSheetDecoration,
+        decoration: decoration,
+        isRequired: isRequired,
+        onSelected: onSelected,
+        onSaved: onSaved,
+      ),
+    );
   }
 
-  /// _setDefaultCountry function
-  void _setDefaultCountry() {
-    if (widget.defaultCountry != null) {
-      _onSelectedCountry(_country[Countries[widget.defaultCountry]!]!);
-    }
-  }
-
-  ///Read JSON country data from assets
-  Future<dynamic> getResponse() async {
-    var res = await rootBundle
-        .loadString('packages/country_picker_plus/assets/country.json');
-    return jsonDecode(res);
-  }
-
-  ///get countries from json response
-  Future<List<String?>> getCountries() async {
-    _country.clear();
-    var countries = await getResponse() as List;
-    if (_countryFilter.isNotEmpty) {
-      for (var element in _countryFilter) {
-        var result = countries[Countries[element]!];
-        if (result != null) addCountryToList(result);
-      }
-    } else {
-      for (var data in countries) {
-        addCountryToList(data);
-      }
-    }
-    _setDefaultCountry();
-    return _country;
-  }
-
-  ///Add a country to country list
-  void addCountryToList(data) {
-    var model = Country();
-    model.name = data['name'];
-    model.emoji = data['emoji'];
-    if (!mounted) return;
-    setState(() {
-      widget.flagState == CountryFlag.ENABLE ||
-              widget.flagState == CountryFlag.SHOW_IN_DROP_DOWN_ONLY
-          ? _country.add(
-              "${model.emoji!}    ${model.name!}") /* : _country.add(model.name)*/
-          : _country.add(model.name);
-    });
-  }
-
-  ///get states from json response
-  Future<List<String?>> getStates() async {
-    _states.clear();
-    //print(_selectedCountry);
-    var response = await getResponse();
-    var takeState = widget.flagState == CountryFlag.ENABLE ||
-            widget.flagState == CountryFlag.SHOW_IN_DROP_DOWN_ONLY
-        ? response
-            .map((map) => Country.fromJson(map))
-            .where(
-                (item) => item.emoji + "    " + item.name == _selectedCountry)
-            .map((item) => item.state)
-            .toList()
-        : response
-            .map((map) => Country.fromJson(map))
-            .where((item) => item.name == _selectedCountry)
-            .map((item) => item.state)
-            .toList();
-    var states = takeState as List;
-    for (var f in states) {
-      if (!mounted) continue;
-      setState(() {
-        var name = f.map((item) => item.name).toList();
-        for (var stateName in name) {
-          //print(stateName.toString());
-          _states.add(stateName.toString());
-        }
-      });
-    }
-    _states.sort((a, b) => a!.compareTo(b!));
-    return _states;
-  }
-
-  ///get cities from json response
-  Future<List<String?>> getCities() async {
-    _cities.clear();
-    var response = await getResponse();
-    var takeCity = widget.flagState == CountryFlag.ENABLE ||
-            widget.flagState == CountryFlag.SHOW_IN_DROP_DOWN_ONLY
-        ? response
-            .map((map) => Country.fromJson(map))
-            .where(
-                (item) => item.emoji + "    " + item.name == _selectedCountry)
-            .map((item) => item.state)
-            .toList()
-        : response
-            .map((map) => Country.fromJson(map))
-            .where((item) => item.name == _selectedCountry)
-            .map((item) => item.state)
-            .toList();
-    var cities = takeCity as List;
-    for (var f in cities) {
-      var name = f.where((item) => item.name == _selectedState);
-      var cityName = name.map((item) => item.city).toList();
-      cityName.forEach((ci) {
-        if (!mounted) return;
-        setState(() {
-          var citiesName = ci.map((item) => item.name).toList();
-          for (var cityName in citiesName) {
-            //print(cityName.toString());
-            _cities.add(cityName.toString());
-          }
-        });
-      });
-    }
-    _cities.sort((a, b) => a!.compareTo(b!));
-    return _cities;
-  }
-
-  ///get methods to catch newly selected country state and city and populate state based on country, and city based on state
-  void _onSelectedCountry(String value) {
-    if (!mounted) return;
-    setState(() {
-      if (widget.flagState == CountryFlag.SHOW_IN_DROP_DOWN_ONLY) {
-        try {
-          widget.onCountryChanged!(value.substring(6).trim());
-        } catch (e) {
-          rethrow;
-        }
-      } else {
-        widget.onCountryChanged!(value);
-      }
-      //code added in if condition
-      if (value != _selectedCountry) {
-        _states.clear();
-        _cities.clear();
-        _selectedState = widget.stateDropdownLabel;
-        _selectedCity = widget.cityDropdownLabel;
-        widget.onStateChanged!(null);
-        widget.onCityChanged!(null);
-        _selectedCountry = value;
-        getStates();
-      } else {
-        widget.onStateChanged!(_selectedState);
-        widget.onCityChanged!(_selectedCity);
-      }
-    });
-  }
-
-  /// _onSelectedState Function
-  void _onSelectedState(String value) {
-    if (!mounted) return;
-    setState(() {
-      widget.onStateChanged!(value);
-      //code added in if condition
-      if (value != _selectedState) {
-        _cities.clear();
-        _selectedCity = widget.cityDropdownLabel;
-        widget.onCityChanged!(null);
-        _selectedState = value;
-        getCities();
-      } else {
-        widget.onCityChanged!(_selectedCity);
-      }
-    });
-  }
-
-  /// _onSelectedCity Function
-  void _onSelectedCity(String value) {
-    if (!mounted) return;
-    setState(() {
-      //code added in if condition
-      if (value != _selectedCity) {
-        _selectedCity = value;
-        widget.onCityChanged!(value);
-      }
-    });
+  ///### State Field
+  ///#### Attributes
+  ///```
+  /// required String country,
+  /// required String state,
+  /// String? initialValue,
+  /// String? searchHintText,
+  /// String? hintText,
+  /// String? label,
+  /// CPPSFDecoration searchDecoration = const CPPSFDecoration(),
+  /// CPPBSHDecoration bottomSheetDecoration = const CPPBSHDecoration(),
+  /// CPPFDecoration decoration = const CPPFDecoration(),
+  /// bool isRequired = false,
+  /// void Function(String value)? onSelected,
+  /// void Function(String? value)? onSaved,
+  ///```
+  static Widget city({
+    required String country,
+    required String state,
+    String? initialValue,
+    String? searchHintText,
+    String? hintText,
+    String? label,
+    CPPSFDecoration searchDecoration = const CPPSFDecoration(),
+    CPPBSHDecoration bottomSheetDecoration = const CPPBSHDecoration(),
+    CPPFDecoration decoration = const CPPFDecoration(),
+    bool isRequired = false,
+    void Function(String value)? onSelected,
+    void Function(String? value)? onSaved,
+  }) {
+    return BlocProvider(
+      create: (context) => CountriesBloc(),
+      child: CityFieldPicker(
+        initialValue: initialValue,
+        country: country,
+        state: state,
+        searchHintText: searchHintText,
+        hintText: hintText,
+        label: label,
+        searchDecoration: searchDecoration,
+        bottomSheetDecoration: bottomSheetDecoration,
+        decoration: decoration,
+        isRequired: isRequired,
+        onSelected: onSelected,
+        onSaved: onSaved,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        countryDropdown(),
-        stateDropdown(),
-        cityDropdown(),
-      ],
-    );
-  }
-
-  ///filter Country Data according to user input
-  Future<List<String?>> getCountryData(filter) async {
-    var filteredList = _country
-        .where(
-            (country) => country!.toLowerCase().contains(filter.toLowerCase()))
-        .toList();
-    if (filteredList.isEmpty) {
-      return _country;
-    } else {
-      return filteredList;
-    }
-  }
-
-  ///filter Sate Data according to user input
-  Future<List<String?>> getStateData(filter) async {
-    var filteredList = _states
-        .where((state) => state!.toLowerCase().contains(filter.toLowerCase()))
-        .toList();
-    if (filteredList.isEmpty) {
-      return _states;
-    } else {
-      return filteredList;
-    }
-  }
-
-  ///filter City Data according to user input
-  Future<List<String?>> getCityData(filter) async {
-    var filteredList = _cities
-        .where((city) => city!.toLowerCase().contains(filter.toLowerCase()))
-        .toList();
-    if (filteredList.isEmpty) {
-      return _cities;
-    } else {
-      return filteredList;
-    }
-  }
-
-  ///Country Dropdown Widget
-  Widget countryDropdown() {
-    return DropdownWithSearch(
-      hintText: widget.countrySearchHintText ?? 'search Country',
-      bottomSheetStyle: widget.bottomSheetStyle,
-      listItemStyle: widget.listItemStyle,
-      fieldPadding: widget.fieldPadding,
-      fieldMargin: widget.fieldMargin,
-      selectedItemStyle: widget.selectedItemStyle,
-      searchFieldDecoration: widget.searchFiedlDecoration,
-
-      decoration: widget.dropdownDecoration,
-      disabledDecoration: widget.disabledDropdownDecoration,
-      disabled: _country.isEmpty || widget.disableCountry ? true : false,
-
-      label: widget.countryDropdownLabel,
-      items: _country.map((String? dropDownStringItem) {
-        return dropDownStringItem;
-      }).toList(),
-      selected: _selectedCountry ?? widget.countryDropdownLabel,
-      //selected: _selectedCountry != null ? _selectedCountry : "Country",
-      //onChanged: (value) => _onSelectedCountry(value),
-      onChanged: (value) {
-        if (value != null) {
-          _onSelectedCountry(value);
-        }
-      },
-    );
-  }
-
-  ///State Dropdown Widget
-  Widget stateDropdown() {
-    return DropdownWithSearch(
-      hintText: widget.stateSearchHintText ?? 'search state',
-      bottomSheetStyle: widget.bottomSheetStyle,
-      fieldMargin: widget.fieldMargin,
-      listItemStyle: widget.listItemStyle,
-      fieldPadding: widget.fieldPadding,
-      disabled: _states.isEmpty ? true : false,
-      items: _states.map((String? dropDownStringItem) {
-        return dropDownStringItem;
-      }).toList(),
-      selectedItemStyle: widget.selectedItemStyle,
-
-      searchFieldDecoration: widget.searchFiedlDecoration,
-      decoration: widget.dropdownDecoration,
-
-      disabledDecoration: widget.disabledDropdownDecoration,
-      selected: _selectedState,
-      label: widget.stateDropdownLabel,
-      //onChanged: (value) => _onSelectedState(value),
-      onChanged: (value) {
-        //print("stateChanged $value $_selectedState");
-        value != null
-            ? _onSelectedState(value)
-            : _onSelectedState(_selectedState);
-      },
-    );
-  }
-
-  ///City Dropdown Widget
-  Widget cityDropdown() {
-    return DropdownWithSearch(
-      hintText: widget.citySearchHintText ?? 'search city',
-      bottomSheetStyle: widget.bottomSheetStyle,
-      fieldMargin: widget.fieldMargin,
-      listItemStyle: widget.listItemStyle,
-      fieldPadding: widget.fieldPadding,
-      disabled: _cities.isEmpty ? true : false,
-      items: _cities.map((String? dropDownStringItem) {
-        return dropDownStringItem;
-      }).toList(),
-      selectedItemStyle: widget.selectedItemStyle,
-
-      searchFieldDecoration: widget.searchFiedlDecoration,
-      decoration: widget.dropdownDecoration,
-
-      disabledDecoration: widget.disabledDropdownDecoration,
-      selected: _selectedCity,
-      label: widget.cityDropdownLabel,
-      //onChanged: (value) => _onSelectedCity(value),
-      onChanged: (value) {
-        //print("cityChanged $value $_selectedCity");
-        value != null ? _onSelectedCity(value) : _onSelectedCity(_selectedCity);
-      },
+    return BlocProvider(
+      create: (context) => CountriesBloc(),
+      child: CountryPickerPlusInit(
+        countryLabel: countryLabel,
+        countryInitialValue: countryInitialValue,
+        stateInitialValue: stateInitialValue,
+        cityInitialValue: cityInitialValue,
+        stateLabel: stateLabel,
+        cityLabel: cityLabel,
+        countryHintText: countryHintText,
+        stateHintText: stateHintText,
+        cityHintText: cityHintText,
+        hideFields: hideFields,
+        isRequired: isRequired,
+        decoration: decoration,
+        bottomSheetDecoration: bottomSheetDecoration,
+        searchDecoration: searchDecoration,
+        onCountryChanged: onCountrySelected,
+        onStateChanged: onStateSelected,
+        onCityChanged: onCitySelected,
+        onCountrySaved: onCountrySaved,
+        onStateSaved: onStateSaved,
+        onCitySaved: onCitySaved,
+        countrySearchHintText: countrySearchHintText,
+        stateSearchHintText: stateSearchHintText,
+        citySearchHintText: citySearchHintText,
+      ),
     );
   }
 }

@@ -1,0 +1,1 @@
+enum LabelPosition { defaultPosition, top }
