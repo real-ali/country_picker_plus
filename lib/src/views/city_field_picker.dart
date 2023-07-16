@@ -10,7 +10,7 @@ import 'components/field_widget.dart';
 import 'components/item_box.dart';
 import 'components/search_field_widget.dart';
 
-class CityFieldPicker extends StatelessWidget {
+class CityFieldPicker extends StatefulWidget {
   final String country;
   final String state;
   final String? searchHintText;
@@ -42,6 +42,12 @@ class CityFieldPicker extends StatelessWidget {
   });
 
   @override
+  State<CityFieldPicker> createState() => _CityFieldPickerState();
+}
+
+class _CityFieldPickerState extends State<CityFieldPicker> {
+  String _searchValue = '';
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: _build,
@@ -51,52 +57,70 @@ class CityFieldPicker extends StatelessWidget {
   Widget _build(BuildContext context, CountriesState state) {
     return FieldWidget(
       onTap: () => _cityOnTapHandler(context),
-      label: label ?? '',
-      hintText: hintText,
-      initialValue: state.city.name.isEmpty ? initialValue : state.city.name,
-      onSaved: onSaved,
-      isRequired: isRequired,
-      decoration: decoration,
-      searchDecoration: searchDecoration,
-      bottomSheetDecoration: bottomSheetDecoration,
+      label: widget.label ?? '',
+      hintText: widget.hintText,
+      initialValue:
+          state.city.name.isEmpty ? widget.initialValue : state.city.name,
+      onSaved: widget.onSaved,
+      isRequired: widget.isRequired,
+      decoration: widget.decoration,
+      searchDecoration: widget.searchDecoration,
+      bottomSheetDecoration: widget.bottomSheetDecoration,
     );
   }
 
   void _cityOnTapHandler(BuildContext context) {
     showModalBottomSheet(
-      shape: bottomSheetDecoration.shape,
+      shape: widget.bottomSheetDecoration.shape,
       isScrollControlled: true,
       // useRootNavigator: true,
       context: context,
       builder: (_) {
-        final cppBottomSheetWidget = CPPBottomSheetWidget(
-          decoration: bottomSheetDecoration,
-          items: _items(context),
-          searchFieldWidget: _searchFieldWidget(context),
-        );
-        final child = Padding(
-          padding: MediaQuery.of(_).viewInsets,
-          child: cppBottomSheetWidget,
-        );
-        return BlocProvider.value(
-          value: BlocProvider.of<CountriesBloc>(context),
-          child: child,
+        return StatefulBuilder(
+          builder: (_, setState) {
+            final cppBottomSheetWidget = CPPBottomSheetWidget(
+              decoration: widget.bottomSheetDecoration,
+              items: _items(context),
+              searchFieldWidget: _searchFieldWidget(setState),
+            );
+            final child = Padding(
+              padding: MediaQuery.of(_).viewInsets,
+              child: cppBottomSheetWidget,
+            );
+            return BlocProvider.value(
+              value: BlocProvider.of<CountriesBloc>(context),
+              child: child,
+            );
+          },
         );
       },
     );
   }
 
+  SearchFieldWidget _searchFieldWidget(StateSetter setState) {
+    return SearchFieldWidget(
+      hintText: widget.searchHintText,
+      decoration: widget.searchDecoration,
+      onChanged: (value) {
+        setState(() {
+          _searchValue = value;
+        });
+      },
+    );
+  }
+
   _items(BuildContext context) {
-    final children =
-        context.read<CountriesBloc>().getCities(country, state)?.map(
+    final children = context
+        .read<CountriesBloc>()
+        .getCities(widget.country, widget.state, _searchValue)
+        ?.map(
       (item) {
         return ItemBox(
           value: item.name,
-          decoration: bottomSheetDecoration,
+          decoration: widget.bottomSheetDecoration,
           onTab: () {
-            context.read<CountriesBloc>().setQuery('');
-            context.read<CountriesBloc>().setCity(item);
-            onSelected!(item.name);
+            context.read<CountriesBloc>().setCity(city:item);
+            widget.onSelected!(item.name);
             Navigator.of(context).pop();
           },
         );
@@ -104,15 +128,15 @@ class CityFieldPicker extends StatelessWidget {
     );
     return ListView(
       physics: const BouncingScrollPhysics(),
-      children: children?.toList() ?? [],
-    );
-  }
-
-  _searchFieldWidget(BuildContext context) {
-    return SearchFieldWidget(
-      hintText: searchHintText,
-      decoration: searchDecoration,
-      onChanged: context.read<CountriesBloc>().setQuery,
+      children: [...children?.toList()??[] ,ItemBox(
+          value: _searchValue,
+          decoration: widget.bottomSheetDecoration,
+          onTab: () {
+            context.read<CountriesBloc>().setCity(name:_searchValue);
+            widget.onSelected!(_searchValue);
+            Navigator.of(context).pop();
+          },
+        )],
     );
   }
 }

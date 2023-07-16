@@ -111,7 +111,7 @@ class CounteyPickerPlusView extends StatelessWidget {
         child: Column(
           children: [
             CountryPickerPlus(
-              // hideFields: const [CPPInputType.city],
+              // hideFields: true,
               isRequired: true,
               countryLabel: "Country",
               countrySearchHintText: "Search Country",
@@ -124,6 +124,12 @@ class CounteyPickerPlusView extends StatelessWidget {
               decoration: fieldDecoration,
               searchDecoration: searchDecoration,
               onCountrySaved: (value) {
+                print(value);
+              },
+              onCitySaved: (value) {
+                print(value);
+              },
+              onStateSaved: (value) {
                 print(value);
               },
               onCountrySelected: (value) {

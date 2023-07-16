@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'controller/cubit/countries_cubit.dart';
 import 'models/bottom_sheet_decoration.dart';
-import 'models/enums/input_type.dart';
+
 import 'models/field_decoreation.dart';
 import 'models/search_field_decoration.dart';
 import 'views/city_field_picker.dart';
@@ -26,7 +26,7 @@ class CountryPickerPlusInit extends StatefulWidget {
   final String? stateInitialValue;
   final String? cityInitialValue;
 
-  final List<CPPInputType>? hideFields;
+  final bool? hideFields;
 
   final bool isRequired;
   final CPPFDecoration decoration;
@@ -121,23 +121,21 @@ class _CountryPickerPlusInitState extends State<CountryPickerPlusInit> {
 
   @override
   Widget build(BuildContext context) {
-    final isCountryHide =
-        widget.hideFields?.contains(CPPInputType.country) ?? false;
-    final isStateHide =
-        widget.hideFields?.contains(CPPInputType.state) ?? false;
-    final isCityHide = widget.hideFields?.contains(CPPInputType.city) ?? false;
-
+ 
+  
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
         final countryField =
-            !isCountryHide ? _buildCountryField(context) : const SizedBox();
+            _buildCountryField(context);
         final stateField =
-            !isStateHide ? _buildStateField(state) : const SizedBox();
+             _buildStateField(state) ;
         final cityField =
-            !isCityHide ? _buildCityField(state) : const SizedBox();
+            _buildCityField(state) ;
 
         return Column(
-          children: [
+          children: widget.hideFields==false?[
+            countryField,stateField,cityField
+          ]:[
             countryField,
             ...state.country.states.isNotEmpty ||
                     widget.stateInitialValue != null

@@ -1,0 +1,11 @@
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /snap/flutter/current/usr/bin/clang++ 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+/snap/flutter/current/usr/bin/ld: /lib/x86_64-linux-gnu/libgcc_s.so.1: undefined reference to `_dl_find_object@GLIBC_2.35'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+

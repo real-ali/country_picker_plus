@@ -5,7 +5,6 @@ class CountriesState {
   final Country country;
   final CountryState countryState;
   final City city;
-  final String? query;
 
   final bool isLoading;
   final bool isIdle;
@@ -17,7 +16,6 @@ class CountriesState {
     required this.countries,
     this.isLoading = false,
     this.isIdle = false,
-    this.query,
     this.hasError = false,
     this.error = '',
     this.isLoad = false,
@@ -29,7 +27,6 @@ class CountriesState {
     this.countries = const [],
     this.isLoading = false,
     this.isIdle = false,
-    this.query,
     this.hasError = false,
     this.error = '',
     this.isLoad = false,
@@ -43,7 +40,6 @@ class CountriesState {
     Country? country,
     bool? isLoading,
     bool? isIdle,
-    String? query,
     bool? hasError,
     String? error,
     bool? isLoad,
@@ -55,7 +51,6 @@ class CountriesState {
       country: country ?? this.country,
       isIdle: isIdle ?? this.isIdle,
       isLoad: isLoad ?? this.isLoad,
-      query: query ?? this.query,
       isLoading: isLoading ?? this.isLoading,
       hasError: hasError ?? this.hasError,
       error: error ?? this.error,

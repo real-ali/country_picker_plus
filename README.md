@@ -1,4 +1,4 @@
-## Country Picker Plus
+## Country Picker Plus 🌎
 
 A flutter package to display list of Countries, States and Cities depends on Selected, also you can search country, state, and city all around the world.
 
@@ -43,13 +43,13 @@ CountryPickerPlus(
    onCitySelected: (value) {},
 ),
 ```
-**Note:** You can hide each field as you wish
+**Note:** You can hide all fields until the previous field is selected
 
 For Instance: 
 
 In the main package class. Use the following property
 ```dart
-hideFields: const [CPPInputType.city,...],
+hideFields: true,
 ```
 
 2. Or use each of the fields individually [`country`,`state`,`city`]

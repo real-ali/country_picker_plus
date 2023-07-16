@@ -10,7 +10,7 @@ import 'src/views/state_field_picker.dart';
 
 export 'src/models/bottom_sheet_decoration.dart';
 export 'src/models/enums/close_icon.dart';
-export 'src/models/enums/input_type.dart';
+
 export 'src/models/enums/label_position.dart';
 export 'src/models/enums/pop_up_type.dart';
 export 'src/models/enums/search_icon.dart';
@@ -158,13 +158,16 @@ class CountryPickerPlus extends StatelessWidget {
   /// ```
   final String? citySearchHintText;
 
-  /// hide some Feild **[`country`,`state`,`city`]**
+  
+  ///Specify whether to show fields before
+  ///selecting the previous field or not.
   ///
-  /// For Instance:
-  /// ```
-  /// hideFields: [CPPInputType.city]
-  /// ```
-  final List<CPPInputType>? hideFields;
+  ///If it is ‍‍‍‍‍```false```, all fields will be displayed.
+  ///
+  ///```‍‍
+  ///hideFields: false; or hideFields: true;
+  ///```
+  final bool hideFields;
 
   ///Specify whether the field is **isRequired** or not.
   ///```
@@ -350,7 +353,7 @@ class CountryPickerPlus extends StatelessWidget {
   ///
   const CountryPickerPlus({
     super.key,
-    this.hideFields,
+    this.hideFields=false,
     this.onCountrySelected,
     this.onStateSelected,
     this.onCitySelected,
