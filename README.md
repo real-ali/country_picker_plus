@@ -68,6 +68,12 @@ CountryPickerPlus.city(country:'COUNTRY_NAME',state:'STATE_NAME',...);
 
 And and and other features that you can play with using code... :) 
 
+<a href="https://github.com/real-ali/country_picker_plus/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=angular/angular-ja" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
 ## Additional information
 
 A Package Developed by Ali Hosseini
